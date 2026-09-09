@@ -1,0 +1,70 @@
+# Gradle
+.gradle/
+build/
+**/build/
+
+# Kotlin caches
+.kotlin/
+
+# Local configuration
+local.properties
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+
+# Generated captures
+captures/
+
+# Signing keys
+*.jks
+*.keystore
+
+# Release artifacts
+app/release/
+app/debug/
+
+# APKs / Bundles
+*.apk
+*.ap_
+*.aab
+
+# Dalvik / ART
+*.dex
+
+# Java / Kotlin compiled output
+*.class
+
+# Native build outputs
+.externalNativeBuild/
+.cxx/
+
+# NDK
+obj/
+
+# Logs
+*.log
+
+# Heap dumps
+*.hprof
+
+# Profiling outputs
+*.trace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Crash dumps
+hs_err_pid*
+replay_pid*
+
+# KSP generated outputs
+.ksp/
+
+# Compose previews cache
+.idea/caches/
+.idea/libraries/
+
+# Android Studio deployment settings
+deploymentTargetDropDown.xml
