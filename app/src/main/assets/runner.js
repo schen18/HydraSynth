@@ -12,6 +12,9 @@ function resumeAudio() {
                         console.error("Error resuming Microphone AudioContext:", e);
                     });
                 }
+                if (a.meyda && typeof a.meyda.start === 'function') {
+                    a.meyda.start();
+                }
                 if (!a.stream && window.navigator && window.navigator.mediaDevices) {
                     console.log("Mic stream missing, re-initializing microphone audio...");
                     if (typeof hydra.synth._initAudio === 'function') {

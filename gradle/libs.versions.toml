@@ -38,6 +38,7 @@ moshiKotlinCodegen = "1.15.2"
 datastorePreferences = "1.1.7"
 robolectric = "4.16.1"
 roborazzi = "1.59.0"
+webkit = "1.12.1"
 
 [libraries]
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
@@ -87,6 +88,7 @@ robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "
 roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "roborazzi" }
 roborazzi-compose = { group = "io.github.takahirom.roborazzi", name = "roborazzi-compose", version.ref = "roborazzi" }
 roborazzi-junit-rule = { group = "io.github.takahirom.roborazzi", name = "roborazzi-junit-rule", version.ref = "roborazzi" }
+androidx-webkit = { group = "androidx.webkit", name = "webkit", version.ref = "webkit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

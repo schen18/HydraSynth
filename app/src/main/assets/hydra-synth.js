@@ -3613,11 +3613,11 @@ class Audio {
         this.meyda = _meyda.default.createMeydaAnalyzer({
           audioContext: this.context,
           source: audio_stream,
-          featureExtractors: ['loudness' //  'perceptualSpread',
-          //  'perceptualSharpness',
-          //  'spectralCentroid'
-          ]
+          featureExtractors: ['loudness']
         });
+        if (this.meyda && typeof this.meyda.start === 'function') {
+          this.meyda.start();
+        }
       }).catch(err => console.log('ERROR', err));
     }
   }

@@ -4,11 +4,14 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.ViewGroup
 import android.webkit.ConsoleMessage
 import android.webkit.JavascriptInterface
 import android.webkit.PermissionRequest
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
@@ -43,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.webkit.WebViewAssetLoader
 import com.dissonance.wfarer.hydra.db.AppDatabase
 import com.dissonance.wfarer.hydra.db.ScriptEntity
 import com.dissonance.wfarer.hydra.db.ScriptRepository
@@ -307,6 +311,10 @@ fun HydraApp(
             ) {
                 AndroidView(
                     factory = { ctx ->
+                        val assetLoader = WebViewAssetLoader.Builder()
+                            .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(ctx))
+                            .build()
+
                         WebView(ctx).apply {
                             layoutParams = ViewGroup.LayoutParams(
                                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -340,11 +348,21 @@ fun HydraApp(
                                         request.deny()
                                     }
                                 }
-                                override fun onConsoleMessage(consoleMessage: ConsoleMessage) = true
+                                override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
+                                    Log.d("HydraJS", "[${consoleMessage.messageLevel()}] ${consoleMessage.message()} (${consoleMessage.sourceId()}:${consoleMessage.lineNumber()})")
+                                    return true
+                                }
                             }
-                            webViewClient = WebViewClient()
+                            webViewClient = object : WebViewClient() {
+                                override fun shouldInterceptRequest(
+                                    view: WebView,
+                                    request: WebResourceRequest
+                                ): WebResourceResponse? {
+                                    return assetLoader.shouldInterceptRequest(request.url)
+                                }
+                            }
                             addJavascriptInterface(activity.HydraBridge(), "AndroidBridge")
-                            loadUrl("file:///android_asset/index.html")
+                            loadUrl("https://appassets.androidplatform.net/assets/index.html")
                             onWebViewCreated(this)
                         }
                     },
