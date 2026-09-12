@@ -111,7 +111,9 @@ class MainActivity : ComponentActivity() {
         if (!cameraGranted || !audioGranted) {
             Toast.makeText(this, "Camera & Audio access enable full interactive patches.", Toast.LENGTH_SHORT).show()
         } else {
-            webViewRef?.evaluateJavascript("initHydra(); resumeAudio();", null)
+            // Force: bypass the retry throttle — the permission was just granted,
+            // so the next getUserMedia is expected to succeed.
+            webViewRef?.evaluateJavascript("initHydra(); resumeAudio(true);", null)
         }
     }
 
@@ -170,6 +172,13 @@ class MainActivity : ComponentActivity() {
         fun onError(msg: String) {
             runOnUiThread {
                 Toast.makeText(this@MainActivity, "⚠️ JS Error: $msg", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        @JavascriptInterface
+        fun onMicError(msg: String) {
+            runOnUiThread {
+                Toast.makeText(this@MainActivity, "🎤 Mic unavailable: $msg", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -343,7 +352,7 @@ fun HydraApp(
                                     }
                                     if (toGrant.isNotEmpty()) {
                                         request.grant(toGrant.toTypedArray())
-                                        post { evaluateJavascript("resumeAudio();", null) }
+                                        post { evaluateJavascript("resumeAudio(true);", null) }
                                     } else {
                                         request.deny()
                                     }
@@ -359,6 +368,13 @@ fun HydraApp(
                                     request: WebResourceRequest
                                 ): WebResourceResponse? {
                                     return assetLoader.shouldInterceptRequest(request.url)
+                                }
+
+                                override fun onPageFinished(view: WebView, url: String?) {
+                                    // Permission callbacks can fire before the page has
+                                    // loaded (initHydra would be undefined); re-kick here
+                                    // so those early calls are not lost.
+                                    view.evaluateJavascript("initHydra(); resumeAudio();", null)
                                 }
                             }
                             addJavascriptInterface(activity.HydraBridge(), "AndroidBridge")
